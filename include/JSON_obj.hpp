@@ -27,6 +27,7 @@ private:
     std::map<std::string, std::vector<bool>> *bool_arrays = nullptr;
     std::map<std::string, std::vector<std::string>> *string_arrays = nullptr;
     std::map<std::string, std::vector<JSON_obj>> *JSON_obj_arrays = nullptr;
+    std::map<std::string, std::vector<JSON_obj>> *array_arrays = nullptr;
 
     std::string get_string(const std::string &JSON_string, size_t &i);
     float get_number(const std::string &JSON_string, size_t &i);
@@ -36,4 +37,5 @@ private:
     std::vector<float> get_number_array(const std::string &JSON_string, size_t &i);
     std::vector<bool> get_bool_array(const std::string &JSON_string, size_t &i);
     std::vector<JSON_obj> get_JSON_array(const std::string &JSON_string, size_t &i);
+
 };
