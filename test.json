@@ -9,6 +9,24 @@
         "qwe",
         "123"
     ],
+    "nums": [
+        123,
+        1.23,
+        44
+    ],
+    "bools": [
+        true,
+        false
+    ],
+    "jsons": {
+        "string": "string",
+        "num": 123,
+        "bool": true,
+        "mas": [
+            123,
+            321
+        ]
+    },
     "members": [
         {
             "name": "Molecule Man",

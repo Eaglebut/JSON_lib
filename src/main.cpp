@@ -36,10 +36,10 @@ void test_JSON_obj()
 void test_String_functions()
 {
     string str = "12345 13234 123";
-    std::cout << *sub_string(str, 1, 3) << std::endl;
+    std::cout << sub_string(str, 1, 3) << std::endl;
 
-    vector<string> *vec = split(str, ' ');
-    for (auto &i : *vec)
+    vector<string> vec = split(str, ' ');
+    for (auto &i : vec)
     {
         std::cout << i << std::endl;
     }
