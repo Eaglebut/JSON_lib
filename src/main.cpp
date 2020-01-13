@@ -21,16 +21,15 @@ std::string readFile(const std::string &fileName)
 void test_JSON_obj()
 {
     std::string json_string = readFile("test.json");
-    JSON_obj *object = new JSON_obj;
-    object->parse_string(json_string);
-    JSON_obj object_o = *object;
+    JSON_object object;
+    object.parse_string(json_string);
 
-    std::cout << *static_cast<string *>(object_o["squadName"]) << std::endl;
-    std::cout << *static_cast<float *>(object_o["formed"]) << std::endl;
-    std::cout << *static_cast<bool *>(object_o["active"]) << std::endl;
-    std::cout << object_o.type_of("squadName") << std::endl;
-    std::cout << object_o.type_of("formed") << std::endl;
-    std::cout << object_o.type_of("active") << std::endl;
+    std::cout << *static_cast<string *>(object["squadName"]) << std::endl;
+    std::cout << *static_cast<float *>(object["formed"]) << std::endl;
+    std::cout << *static_cast<bool *>(object["active"]) << std::endl;
+    std::cout << object.type_of("squadName") << std::endl;
+    std::cout << object.type_of("formed") << std::endl;
+    std::cout << object.type_of("active") << std::endl;
 }
 
 void test_String_functions()
@@ -49,5 +48,6 @@ int main()
 {
     //test_String_functions();
     test_JSON_obj();
+
     return 0;
 }

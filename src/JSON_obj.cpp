@@ -1,18 +1,6 @@
 #include "JSON_obj.hpp"
-#include <string>
-#include <map>
-#include <vector>
-#include <iostream>
 
-JSON_obj::JSON_obj()
-{
-}
-
-JSON_obj::~JSON_obj()
-{
-}
-
-void JSON_obj::parse_string(const std::string &JSON_string)
+void JSON_object::parse_string(const std::string &JSON_string)
 {
     bool is_key = true;
     std::string curr_key;
@@ -48,7 +36,6 @@ void JSON_obj::parse_string(const std::string &JSON_string)
 
             if (JSON_string[i] == '0' || std::atof(&JSON_string[i]) != 0.0) // если значение - число
             {
-
                 numbers.insert(std::pair(curr_key, get_number(JSON_string, i)));
                 i++;
                 is_key = true;
@@ -56,7 +43,6 @@ void JSON_obj::parse_string(const std::string &JSON_string)
 
             if (JSON_string[i] == 't' || JSON_string[i] == 'T' || JSON_string[i] == 'f' || JSON_string[i] == 'F') //если значение bool
             {
-
                 bools.insert(std::pair(curr_key, get_bool(JSON_string, i)));
                 i++;
                 is_key = true;
@@ -64,7 +50,6 @@ void JSON_obj::parse_string(const std::string &JSON_string)
 
             if (JSON_string[i] == '{') //если значение - json объект
             {
-
                 JSONs.insert(std::pair(curr_key, get_JSON(JSON_string, i)));
                 i++;
                 is_key = true;
@@ -72,42 +57,14 @@ void JSON_obj::parse_string(const std::string &JSON_string)
 
             if (JSON_string[i] == '[') //если значение - массив
             {
+                auto test = arrays.insert(std::pair(curr_key, get_array(JSON_string, i)));
                 i++;
-                skip_spaces(JSON_string, i);
-
-                if (JSON_string[i] == '"') // если значения массива - строки
-                {
-
-                    string_arrays.insert(std::pair(curr_key, get_string_array(JSON_string, i)));
-                    i++;
-                    is_key = true;
-                }
-                if (JSON_string[i] == '0' || std::atof(&JSON_string[i]) != 0.0) // если значения - числа
-                {
-                    number_arrays.insert(std::pair(curr_key, get_number_array(JSON_string, i)));
-                    i++;
-                    is_key = true;
-                }
-                if (JSON_string[i] == 't' || JSON_string[i] == 'T' || JSON_string[i] == 'f' || JSON_string[i] == 'F') //если значение bool
-                {
-
-                    bool_arrays.insert(std::pair(curr_key, get_bool_array(JSON_string, i)));
-                    i++;
-
-                    is_key = true;
-                }
-                if (JSON_string[i] == '{')
-                {
-                    JSON_obj_arrays.insert(std::pair(curr_key, get_JSON_array(JSON_string, i)));
-                    i++;
-                    is_key = true;
-                }
-                i++;
+                is_key = true;
             }
         }
     }
 }
-void *JSON_obj::operator[](const std::string key)
+void *JSON_object::operator[](const std::string key)
 {
     try
     {
@@ -140,28 +97,7 @@ void *JSON_obj::operator[](const std::string key)
 
     try
     {
-        return &string_arrays.at(key);
-    }
-    catch (const std::out_of_range &e)
-    {
-    }
-    try
-    {
-        return &number_arrays.at(key);
-    }
-    catch (const std::out_of_range &e)
-    {
-    }
-    try
-    {
-        return &bool_arrays.at(key);
-    }
-    catch (const std::out_of_range &e)
-    {
-    }
-    try
-    {
-        return &JSON_obj_arrays.at(key);
+        return &arrays.at(key);
     }
     catch (const std::out_of_range &e)
     {
@@ -169,7 +105,7 @@ void *JSON_obj::operator[](const std::string key)
     throw std::out_of_range("object not found");
 }
 
-std::string JSON_obj::type_of(std::string key)
+std::string JSON_object::type_of(std::string key)
 {
     try
     {
@@ -207,10 +143,9 @@ std::string JSON_obj::type_of(std::string key)
     throw std::out_of_range("object not found");
 }
 
-std::string JSON_obj::get_string(const std::string &JSON_string, size_t &i)
+std::string JSON_object::get_string(const std::string &JSON_string, size_t &i)
 {
     i++;
-
     std::string curr_string = "";
     while (JSON_string[i] != '"')
     {
@@ -219,7 +154,7 @@ std::string JSON_obj::get_string(const std::string &JSON_string, size_t &i)
     }
     return curr_string;
 }
-float JSON_obj::get_number(const std::string &JSON_string, size_t &i)
+float JSON_object::get_number(const std::string &JSON_string, size_t &i)
 {
     std::string curr_string = "";
     while (JSON_string[i] != ' ' && JSON_string[i] != ',')
@@ -229,7 +164,7 @@ float JSON_obj::get_number(const std::string &JSON_string, size_t &i)
     }
     return std::atof(curr_string.c_str());
 }
-bool JSON_obj::get_bool(const std::string &JSON_string, size_t &i)
+bool JSON_object::get_bool(const std::string &JSON_string, size_t &i)
 {
     std::string curr_string = "";
     while (JSON_string[i] != ' ' && JSON_string[i] != ',' && JSON_string[i] != '\n' && JSON_string[i] != ']')
@@ -249,9 +184,9 @@ bool JSON_obj::get_bool(const std::string &JSON_string, size_t &i)
         throw std::out_of_range("not a bool");
 }
 
-JSON_obj JSON_obj::get_JSON(const std::string &JSON_string, size_t &i)
+JSON_object JSON_object::get_JSON(const std::string &JSON_string, size_t &i)
 {
-    JSON_obj obj;
+    JSON_object obj;
     size_t start_i = i;
     size_t end_i;
     size_t num_of_branches = 1;
@@ -268,7 +203,7 @@ JSON_obj JSON_obj::get_JSON(const std::string &JSON_string, size_t &i)
     return obj;
 }
 
-void JSON_obj::skip_spaces(const std::string &JSON_string, size_t &i)
+void JSON_object::skip_spaces(const std::string &JSON_string, size_t &i)
 {
     while (JSON_string[i] == ' ' || JSON_string[i] == '\n')
     {
@@ -276,50 +211,115 @@ void JSON_obj::skip_spaces(const std::string &JSON_string, size_t &i)
     }
 }
 
-std::vector<std::string> JSON_obj::get_string_array(const std::string &JSON_string, size_t &i)
+std::vector<Array_elem> JSON_object::get_string_array(const std::string &JSON_string, size_t &i)
 {
 
-    std::vector<std::string> arr;
+    std::vector<Array_elem> arr;
+    Array_elem elem;
+    elem.type = "string";
     while (JSON_string[i] != ']')
     {
         if (JSON_string[i] == '"')
         {
-            arr.push_back(get_string(JSON_string, i));
+            elem.string = get_string(JSON_string, i);
+            arr.push_back(elem);
         }
         i++;
     }
     return arr;
 }
-std::vector<float> JSON_obj::get_number_array(const std::string &JSON_string, size_t &i)
+std::vector<Array_elem> JSON_object::get_number_array(const std::string &JSON_string, size_t &i)
 {
-    std::vector<float> arr;
+    std::vector<Array_elem> arr;
+    Array_elem elem;
+    elem.type = "number";
+
     while (JSON_string[i] != ']')
     {
-        arr.push_back(get_number(JSON_string, i));
+        elem.number = get_number(JSON_string, i);
+        arr.push_back(elem);
         i++;
         skip_spaces(JSON_string, i);
     }
     return arr;
 }
-std::vector<bool> JSON_obj::get_bool_array(const std::string &JSON_string, size_t &i)
+std::vector<Array_elem> JSON_object::get_bool_array(const std::string &JSON_string, size_t &i)
 {
-    std::vector<bool> arr;
+    std::vector<Array_elem> arr;
+    Array_elem elem;
+    elem.type = "bool";
     while (JSON_string[i] != ']')
     {
-        arr.push_back(get_bool(JSON_string, i));
+        elem.bool_elem = get_bool(JSON_string, i);
+        arr.push_back(elem);
         i++;
         skip_spaces(JSON_string, i);
     }
     return arr;
 }
-std::vector<JSON_obj> JSON_obj::get_JSON_array(const std::string &JSON_string, size_t &i)
+std::vector<Array_elem> JSON_object::get_JSON_array(const std::string &JSON_string, size_t &i)
 {
-    std::vector<JSON_obj> arr;
+    std::vector<Array_elem> arr;
+    Array_elem elem;
+    elem.type = "JSON";
     while (JSON_string[i] != ']')
     {
-        arr.push_back(get_JSON(JSON_string, i));
+        elem.JSON = get_JSON(JSON_string, i);
+        arr.push_back(elem);
+
         i++;
         skip_spaces(JSON_string, i);
+    }
+    return arr;
+}
+
+std::vector<Array_elem> JSON_object::get_array(const std::string &JSON_string, size_t &i)
+{
+    std::vector<Array_elem> arr;
+    size_t num_of_branches = 1;
+    i++;
+    Array_elem elem;
+
+    while (num_of_branches != 0)
+    {
+        skip_spaces(JSON_string, i);
+        if (JSON_string[i] == '[')
+            num_of_branches++;
+        if (JSON_string[i] == ']')
+            num_of_branches--;
+        if (JSON_string[i] == '"') // если значения массива - строки
+        {
+            arr = get_string_array(JSON_string, i);
+            i++;
+            return arr;
+        }
+        if (JSON_string[i] == '0' || std::atof(&JSON_string[i]) != 0.0) // если значения - числа
+        {
+            arr = get_number_array(JSON_string, i);
+            i++;
+            return arr;
+        }
+        if (JSON_string[i] == 't' || JSON_string[i] == 'T' || JSON_string[i] == 'f' || JSON_string[i] == 'F') //если значения bool
+        {
+            arr = get_bool_array(JSON_string, i);
+            i++;
+            return arr;
+        }
+        if (JSON_string[i] == '{') //если значения - json объект
+        {
+            arr = get_JSON_array(JSON_string, i);
+            i++;
+            return arr;
+        }
+        if (JSON_string[i] == '[')
+        {
+            elem.type = "array";
+            elem.array = get_array(JSON_string, i);
+            arr.push_back(elem);
+            i++;
+            num_of_branches--;
+        }
+        i++;
     }
     return arr;
 }
