@@ -25,7 +25,10 @@
         "mas": [
             123,
             321
-        ]
+        ],
+        "json": {
+            "num": 123
+        }
     },
     "arrays": [
         [
@@ -71,7 +74,11 @@
                 "Radiation resistance",
                 "Turning tiny",
                 "Radiation blast"
-            ]
+            ],
+            "json": {
+                "num": 123,
+                "string": "string"
+            }
         },
         {
             "name": "Madame Uppercut",
